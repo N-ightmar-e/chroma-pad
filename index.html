@@ -388,6 +388,35 @@
   }
   .btn-ghost.btn-sample:hover{border-style:solid;color:var(--paper-highlight);border-color:var(--ink);background:var(--ink);}
 
+  /* Lighting card */
+  .kelvin-ramp{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    height:20px;border:1px solid var(--ink);border-radius:2px;overflow:hidden;
+    background:linear-gradient(to right, #FFB060 0%, #FFCE8A 28%, #FFF6E0 52%, #FFFFFF 72%, #CFE2FF 100%);
+    position:relative;align-items:end;
+  }
+  .kelvin-ramp span{
+    font-family:var(--f-mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(0,0,0,.55);text-align:center;padding:3px 0;
+    mix-blend-mode:multiply;
+  }
+  .kelvin-presets{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+  }
+  .kelvin-presets button{
+    padding:6px 4px;border:1px solid var(--ink-30);border-radius:2px;
+    background:var(--paper-highlight);color:var(--ink);
+    font-family:var(--f-body);font-weight:500;font-size:11px;
+    display:flex;flex-direction:column;gap:1px;align-items:center;
+    transition:all .15s;cursor:pointer;line-height:1.1;
+  }
+  .kelvin-presets button .mini{
+    font-family:var(--f-mono);font-size:8.5px;letter-spacing:.1em;color:var(--ink-60);
+  }
+  .kelvin-presets button:hover{border-color:var(--ink);}
+  .kelvin-presets button.active{background:var(--ink);color:var(--paper-highlight);border-color:var(--ink);}
+  .kelvin-presets button.active .mini{color:rgba(255,251,241,.65);}
+
   /* ─── STAGE COLUMN ───────────────────────────────── */
   .stage{
     display:flex;flex-direction:column;
@@ -404,6 +433,21 @@
   }
   .stage-head .kr-title{
     font-family:var(--f-body);font-weight:500;letter-spacing:.01em;text-transform:none;font-size:12.5px;color:var(--ink);
+  }
+  .head-controls{display:flex;gap:10px;align-items:center;}
+  .icon-toggle{
+    width:34px;height:34px;border:1px solid var(--ink);border-radius:2px;
+    background:var(--paper-highlight);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    font-size:15px;position:relative;transition:all .2s;
+  }
+  .icon-toggle:hover{background:var(--paper-soft);}
+  .icon-toggle.active{background:var(--ink);color:var(--paper-highlight);}
+  .icon-toggle:not(.active){opacity:.55;}
+  .icon-toggle:not(.active)::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(45deg, transparent 46%, var(--accent) 46%, var(--accent) 54%, transparent 54%);
+    opacity:.7;
   }
   .view-tabs{display:flex;border:1px solid var(--ink);border-radius:2px;overflow:hidden;}
   .view-tabs button{
@@ -814,7 +858,7 @@
             <span class="val" id="logoOpacityVal">95%</span>
           </div>
         </div>
-        <div class="logo-section-label">위치 · Position</div>
+        <div class="logo-section-label">기준 위치 · Anchor</div>
         <div class="logo-pos" id="logoPos">
           <button data-pos="tl" title="좌상"></button>
           <button data-pos="tc" title="상단"></button>
@@ -826,10 +870,54 @@
           <button data-pos="bc" title="하단"></button>
           <button data-pos="br" title="우하"></button>
         </div>
+        <div class="logo-section-label">미세 조정 · Offset &amp; Rotation</div>
+        <div class="sliders logo-sliders">
+          <div class="slider">
+            <label title="X offset · 좌우">X</label>
+            <span class="slider-name">좌우</span>
+            <input type="range" id="logoOffsetX" min="-40" max="40" step="1" value="0" />
+            <span class="val" id="logoOffsetXVal">0</span>
+          </div>
+          <div class="slider">
+            <label title="Y offset · 상하">Y</label>
+            <span class="slider-name">상하</span>
+            <input type="range" id="logoOffsetY" min="-40" max="40" step="1" value="0" />
+            <span class="val" id="logoOffsetYVal">0</span>
+          </div>
+          <div class="slider">
+            <label title="Rotation · 회전">R</label>
+            <span class="slider-name">회전</span>
+            <input type="range" id="logoRotation" min="-180" max="180" step="1" value="0" />
+            <span class="val" id="logoRotationVal">0°</span>
+          </div>
+        </div>
         <div class="logo-actions">
+          <button class="btn-ghost" id="logoResetBtn" type="button">위치 초기화</button>
           <button class="btn-ghost" id="invertBtn" type="button">색 반전</button>
           <button class="btn-ghost danger" id="clearBtn" type="button">제거</button>
         </div>
+      </div>
+    </section>
+
+    <!-- 06 LIGHTING -->
+    <section class="card">
+      <h3><span class="num">06</span> <span class="kr">조명 · 색온도</span> · Lighting <span class="rule"></span></h3>
+      <div class="sliders logo-sliders">
+        <div class="slider">
+          <label title="Kelvin · 색온도">K</label>
+          <span class="slider-name">색온도</span>
+          <input type="range" id="kelvinSlider" min="2700" max="7500" step="100" value="5200" />
+          <span class="val" id="kelvinVal">5200K</span>
+        </div>
+      </div>
+      <div class="kelvin-ramp" aria-hidden="true">
+        <span>촛불</span><span>백열</span><span>주광</span><span>서늘</span>
+      </div>
+      <div class="kelvin-presets" id="kelvinPresets">
+        <button data-k="2800">촛불 <span class="mini">2800K</span></button>
+        <button data-k="3800">따뜻 <span class="mini">3800K</span></button>
+        <button data-k="5200" class="active">표준 <span class="mini">5200K</span></button>
+        <button data-k="6500">주광 <span class="mini">6500K</span></button>
       </div>
     </section>
 
@@ -839,9 +927,13 @@
   <section class="stage">
     <div class="stage-head">
       <div><span class="kr-title">미리보기</span> · Preview Ref <b>№023</b></div>
-      <div class="view-tabs" id="viewTabs">
-        <button class="active" data-view="2d">평면 <span class="en">2D</span></button>
-        <button data-view="3d">스튜디오 <span class="en">3D</span></button>
+      <div class="head-controls">
+        <button class="icon-toggle active" id="mouseToggle" type="button" title="마우스 표시/숨김">🖱</button>
+        <div class="view-tabs" id="viewTabs">
+          <button class="active" data-view="2d">평면 <span class="en">2D</span></button>
+          <button data-view="3d">스튜디오 <span class="en">3D</span></button>
+          <button data-view="desk">책상 <span class="en">Desk</span></button>
+        </div>
       </div>
     </div>
 
@@ -937,6 +1029,7 @@ const state = {
   harmony: 'analogous',
   pattern: 'solo',
   view: '2d',
+  showMouse: true,
   palette: [],
   logo: {
     rawImage: null,
@@ -947,8 +1040,12 @@ const state = {
     scale: 40,
     opacity: 95,
     pos: 'cc',
+    offsetX: 0,
+    offsetY: 0,
+    rotation: 0,
     invert: false,
   },
+  kelvin: 5200,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -1219,30 +1316,33 @@ function processLogoImage(){
 function updateLogoPosition(){
   const img = document.getElementById('padLogo2d');
   if(!img || !state.logo.dataURL) return;
-  const scale = state.logo.scale;  // percent of pad width
-  const w = scale;                  // % width
+  const scale = state.logo.scale;
+  const w = scale;
   const aspect = state.logo.aspectRatio || 1;
-  const h = scale / aspect;         // % height (square pad)
+  const h = scale / aspect;
   img.style.width = w + '%';
   img.style.height = 'auto';
   img.style.opacity = state.logo.opacity / 100;
 
-  // position mapping — padding from edges = 7% of pad
   const pad = 7;
   const pos = state.logo.pos;
-  // horizontal
-  let left = '', right = '';
-  if(pos[1]==='l') left = pad+'%';
-  else if(pos[1]==='r') right = pad+'%';
-  else left = `calc(50% - ${w/2}%)`;
-  // vertical
-  let top = '', bottom = '';
-  if(pos[0]==='t') top = pad+'%';
-  else if(pos[0]==='b') bottom = pad+'%';
-  else top = `calc(50% - ${h/2}%)`;
+  const ox = state.logo.offsetX || 0;
+  const oy = state.logo.offsetY || 0;
+  const rot = state.logo.rotation || 0;
+
+  let left = '', right = '', top = '', bottom = '';
+  // horizontal anchor + offset
+  if(pos[1]==='l') left = (pad + ox) + '%';
+  else if(pos[1]==='r') right = (pad - ox) + '%';
+  else left = `calc(50% - ${w/2}% + ${ox}%)`;
+  // vertical anchor + offset
+  if(pos[0]==='t') top = (pad + oy) + '%';
+  else if(pos[0]==='b') bottom = (pad - oy) + '%';
+  else top = `calc(50% - ${h/2}% + ${oy}%)`;
 
   img.style.left = left; img.style.right = right;
   img.style.top = top; img.style.bottom = bottom;
+  img.style.transform = rot ? `rotate(${rot}deg)` : '';
 }
 
 function clearLogo(){
@@ -1276,6 +1376,104 @@ function loadSampleLogo(){
 /* ═══════════════════════════════════════════════════════════
    THREE.JS SCENE
 ═══════════════════════════════════════════════════════════ */
+function createWoodTexture(){
+  const size = 1024;
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
+  // base plank color (warm oak)
+  ctx.fillStyle = '#8a6540';
+  ctx.fillRect(0, 0, size, size);
+  // long grain variation — bands of lightness
+  for(let y = 0; y < size; y++){
+    const w1 = Math.sin(y * 0.018) * 14;
+    const w2 = Math.sin(y * 0.003 + 1.3) * 24;
+    const n = (Math.random() - 0.5) * 10;
+    const shade = 70 + w1 + w2 + n;
+    ctx.fillStyle = `rgb(${clamp(120+shade*0.6,40,200)|0},${clamp(82+shade*0.4,25,150)|0},${clamp(48+shade*0.25,18,110)|0})`;
+    ctx.fillRect(0, y, size, 1);
+  }
+  // occasional dark grain streaks
+  for(let i = 0; i < 40; i++){
+    const y = Math.random() * size;
+    const h = 1 + Math.random() * 2;
+    const alpha = 0.15 + Math.random() * 0.25;
+    ctx.fillStyle = `rgba(40,25,14,${alpha})`;
+    ctx.fillRect(0, y, size, h);
+  }
+  // knots
+  for(let i = 0; i < 3; i++){
+    const cx = Math.random() * size, cy = Math.random() * size;
+    const r = 10 + Math.random() * 28;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, 'rgba(40,22,12,0.6)');
+    g.addColorStop(0.6, 'rgba(60,38,20,0.35)');
+    g.addColorStop(1, 'rgba(60,38,20,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+  }
+  // fine noise
+  const img = ctx.getImageData(0,0,size,size);
+  const d = img.data;
+  for(let i = 0; i < d.length; i += 4){
+    const n = (Math.random()-0.5) * 14;
+    d[i]   = clamp(d[i]+n, 0, 255);
+    d[i+1] = clamp(d[i+1]+n*0.8, 0, 255);
+    d[i+2] = clamp(d[i+2]+n*0.6, 0, 255);
+  }
+  ctx.putImageData(img, 0, 0);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(2.2, 2.2);
+  tex.anisotropy = 16;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function createMouseMesh(){
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshPhysicalMaterial({
+    color: 0x121110, roughness: 0.32, metalness: 0.08,
+    clearcoat: 0.55, clearcoatRoughness: 0.22
+  });
+  // domed body — half sphere scaled
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(0.08, 48, 24, 0, Math.PI*2, 0, Math.PI/2),
+    bodyMat
+  );
+  body.scale.set(1, 0.55, 1.45);
+  body.castShadow = true;
+  g.add(body);
+  // flat base to close bottom
+  const base = new THREE.Mesh(
+    new THREE.CircleGeometry(0.08, 48),
+    new THREE.MeshStandardMaterial({ color: 0x0a0908, roughness: 0.9 })
+  );
+  base.scale.set(1, 1.45, 1);
+  base.rotation.x = Math.PI/2;
+  base.position.y = 0.0005;
+  g.add(base);
+  // scroll wheel hint (thin cylinder)
+  const wheel = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012, 0.012, 0.018, 24),
+    new THREE.MeshStandardMaterial({ color: 0x2a2826, roughness: 0.5 })
+  );
+  wheel.rotation.z = Math.PI/2;
+  wheel.position.set(0, 0.044, -0.01);
+  g.add(wheel);
+  // accent LED stripe
+  const led = new THREE.Mesh(
+    new THREE.BoxGeometry(0.002, 0.0005, 0.05),
+    new THREE.MeshStandardMaterial({
+      color: 0xC54B2B, emissive: 0xC54B2B, emissiveIntensity: 1.6
+    })
+  );
+  led.position.set(0, 0.052, 0.02);
+  g.add(led);
+  return g;
+}
+
 let three = null;
 function initThree(){
   if(three) return three;
@@ -1303,8 +1501,8 @@ function initThree(){
   key.castShadow = true;
   key.shadow.mapSize.set(2048,2048);
   key.shadow.camera.near=0.5; key.shadow.camera.far=10;
-  key.shadow.camera.left=-2; key.shadow.camera.right=2;
-  key.shadow.camera.top=2; key.shadow.camera.bottom=-2;
+  key.shadow.camera.left=-2.5; key.shadow.camera.right=2.5;
+  key.shadow.camera.top=2.5; key.shadow.camera.bottom=-2.5;
   key.shadow.bias=-0.0004; key.shadow.normalBias=0.02;
   key.shadow.radius = 6;
   scene.add(key);
@@ -1317,17 +1515,17 @@ function initThree(){
   rim.position.set(-0.5, 0.6, -2.5);
   scene.add(rim);
 
-  // ground shadow catcher
-  const ground = new THREE.Mesh(
+  // ground shadow catcher (studio mode)
+  const groundShadow = new THREE.Mesh(
     new THREE.PlaneGeometry(10,10),
     new THREE.ShadowMaterial({ opacity:0.24 })
   );
-  ground.rotation.x = -Math.PI/2;
-  ground.position.y = -0.012;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  groundShadow.rotation.x = -Math.PI/2;
+  groundShadow.position.y = -0.012;
+  groundShadow.receiveShadow = true;
+  scene.add(groundShadow);
 
-  // pad dimensions — 1 unit ≈ 500 mm. thickness ≈ 3mm = 0.006 units
+  // pad
   const W=1.0, D=1.0, H=0.012;
   const padGeo = new RoundedBoxGeometry(W, H, D, 6, 0.028);
   const topTex = new THREE.CanvasTexture(document.createElement('canvas'));
@@ -1342,26 +1540,121 @@ function initThree(){
     sheenColor: new THREE.Color(0xffffff),
   });
   const pad = new THREE.Mesh(padGeo, padMat);
-  pad.position.y = 0;
   pad.castShadow = true; pad.receiveShadow = true;
   scene.add(pad);
 
-  const bottomMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1815, roughness: 0.95, metalness: 0.0
-  });
   const bottom = new THREE.Mesh(
     new RoundedBoxGeometry(W-0.002, 0.004, D-0.002, 4, 0.02),
-    bottomMat
+    new THREE.MeshStandardMaterial({ color: 0x1a1815, roughness: 0.95 })
   );
   bottom.position.y = -H/2 - 0.002;
   bottom.castShadow = true; bottom.receiveShadow = true;
   scene.add(bottom);
 
+  // 3D mouse
+  const mouse3d = createMouseMesh();
+  mouse3d.position.set(0.24, 0.006, 0.16);
+  mouse3d.rotation.y = -0.22;
+  scene.add(mouse3d);
+
+  /* ─── DESK GROUP (hidden by default) ─── */
+  const deskGroup = new THREE.Group();
+  deskGroup.visible = false;
+  scene.add(deskGroup);
+
+  // wooden desk plane
+  const deskTex = createWoodTexture();
+  const deskPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(8, 8),
+    new THREE.MeshStandardMaterial({ map: deskTex, roughness: 0.8, metalness: 0.02 })
+  );
+  deskPlane.rotation.x = -Math.PI/2;
+  deskPlane.position.y = -0.012;
+  deskPlane.receiveShadow = true;
+  deskGroup.add(deskPlane);
+
+  // notebook (cream colored flat box)
+  const notebook = new THREE.Mesh(
+    new RoundedBoxGeometry(0.62, 0.035, 0.84, 3, 0.018),
+    new THREE.MeshStandardMaterial({ color: 0xEDE4D2, roughness: 0.72 })
+  );
+  notebook.position.set(-1.12, 0.008, 0.22);
+  notebook.rotation.y = 0.14;
+  notebook.castShadow = true; notebook.receiveShadow = true;
+  deskGroup.add(notebook);
+
+  // notebook spine (accent)
+  const spine = new THREE.Mesh(
+    new THREE.BoxGeometry(0.022, 0.037, 0.84),
+    new THREE.MeshStandardMaterial({ color: 0xB04A2D, roughness: 0.55 })
+  );
+  spine.position.set(-1.41, 0.008, 0.22);
+  spine.rotation.y = 0.14;
+  spine.castShadow = true;
+  deskGroup.add(spine);
+
+  // mug — ceramic cream
+  const mug = new THREE.Group();
+  mug.position.set(1.15, 0, -0.45);
+  const mugMat = new THREE.MeshPhysicalMaterial({
+    color: 0xF2EEE4, roughness: 0.28, metalness: 0.03,
+    clearcoat: 0.35, clearcoatRoughness: 0.4
+  });
+  const mugBody = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.14, 0.115, 0.22, 40),
+    mugMat
+  );
+  mugBody.position.y = 0.105;
+  mugBody.castShadow = true; mugBody.receiveShadow = true;
+  mug.add(mugBody);
+  const mugHandle = new THREE.Mesh(
+    new THREE.TorusGeometry(0.065, 0.017, 10, 24, Math.PI),
+    mugMat
+  );
+  mugHandle.position.set(0.155, 0.115, 0);
+  mugHandle.rotation.y = -Math.PI/2;
+  mugHandle.castShadow = true;
+  mug.add(mugHandle);
+  const coffee = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.132, 0.132, 0.004, 40),
+    new THREE.MeshPhysicalMaterial({ color: 0x2a140a, roughness: 0.18, clearcoat: 0.8 })
+  );
+  coffee.position.y = 0.213;
+  mug.add(coffee);
+  deskGroup.add(mug);
+
+  // pencil — long thin box with colored tip
+  const pencil = new THREE.Group();
+  pencil.position.set(-0.25, 0.003, -1.1);
+  pencil.rotation.y = -0.34;
+  const pencilBody = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012, 0.012, 0.42, 6),
+    new THREE.MeshStandardMaterial({ color: 0xE0B048, roughness: 0.5 })
+  );
+  pencilBody.rotation.z = Math.PI/2;
+  pencilBody.castShadow = true;
+  pencil.add(pencilBody);
+  const pencilTip = new THREE.Mesh(
+    new THREE.ConeGeometry(0.012, 0.035, 12),
+    new THREE.MeshStandardMaterial({ color: 0xE8D9B8, roughness: 0.5 })
+  );
+  pencilTip.rotation.z = -Math.PI/2;
+  pencilTip.position.x = 0.228;
+  pencil.add(pencilTip);
+  const pencilLead = new THREE.Mesh(
+    new THREE.ConeGeometry(0.004, 0.014, 12),
+    new THREE.MeshStandardMaterial({ color: 0x222, roughness: 0.5 })
+  );
+  pencilLead.rotation.z = -Math.PI/2;
+  pencilLead.position.x = 0.252;
+  pencil.add(pencilLead);
+  deskGroup.add(pencil);
+
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.09;
   controls.minDistance = 1.0;
-  controls.maxDistance = 3.0;
+  controls.maxDistance = 3.5;
   controls.minPolarAngle = 0.18;
   controls.maxPolarAngle = Math.PI/2 - 0.04;
   controls.autoRotate = true;
@@ -1386,8 +1679,72 @@ function initThree(){
   }
   tick();
 
-  three = { scene, camera, renderer, pad, padMat, topTex, controls };
+  three = {
+    scene, camera, renderer, pad, padMat, topTex, controls,
+    mouse: mouse3d, groundShadow, deskGroup,
+    hemi, key, fill, rim,
+  };
+  // initial mouse visibility
+  mouse3d.visible = state.showMouse;
   return three;
+}
+
+/* Planckian color temperature approximation (Tanner Helland) */
+function kelvinToRGB(k){
+  k = clamp(k, 1000, 40000) / 100;
+  let r, g, b;
+  if(k <= 66){ r = 255; }
+  else { r = 329.698727446 * Math.pow(k - 60, -0.1332047592); }
+  if(k <= 66){ g = 99.4708025861 * Math.log(k) - 161.1195681661; }
+  else { g = 288.1221695283 * Math.pow(k - 60, -0.0755148492); }
+  if(k >= 66){ b = 255; }
+  else if(k <= 19){ b = 0; }
+  else { b = 138.5177312231 * Math.log(k - 10) - 305.0447927307; }
+  return [clamp(r,0,255)/255, clamp(g,0,255)/255, clamp(b,0,255)/255];
+}
+function kelvinTempName(k){
+  if(k < 3100) return '촛불';
+  if(k < 4000) return '따뜻';
+  if(k < 5000) return '온백색';
+  if(k < 5800) return '표준';
+  if(k < 6500) return '주광';
+  return '서늘';
+}
+function applyKelvin(){
+  if(!three) return;
+  const k = state.kelvin;
+  const [r,g,b] = kelvinToRGB(k);
+  three.key.color.setRGB(r, g, b);
+  // rim slightly warmer than key for cinematic depth
+  const [rr, rg, rb] = kelvinToRGB(Math.max(2200, k - 600));
+  three.rim.color.setRGB(rr, rg, rb);
+  const modeLabel = state.view === 'desk' ? 'Desk' : 'Studio';
+  document.getElementById('lightMeta').textContent = `${modeLabel} · ${k}K · ${kelvinTempName(k)}`;
+  // reflect slider state in UI
+  const slider = document.getElementById('kelvinSlider');
+  const valEl = document.getElementById('kelvinVal');
+  if(slider) slider.value = k;
+  if(valEl) valEl.textContent = k + 'K';
+  // highlight matching preset if any
+  document.querySelectorAll('#kelvinPresets button').forEach(b=>{
+    b.classList.toggle('active', +b.dataset.k === k);
+  });
+}
+
+function setSceneMode(mode){
+  if(!three) return;
+  const isDesk = mode === 'desk';
+  three.deskGroup.visible = isDesk;
+  three.groundShadow.visible = !isDesk;
+  three.controls.autoRotate = !isDesk;
+  three.hemi.intensity = isDesk ? 0.4 : 0.55;
+  three.renderer.toneMappingExposure = isDesk ? 1.12 : 1.05;
+  three.controls.target.set(0, 0, 0);
+  // default kelvin when entering a mode (unless user already changed it)
+  if(!state.kelvinUserSet){
+    state.kelvin = isDesk ? 3800 : 5200;
+  }
+  applyKelvin();
 }
 
 function drawPadTexture(palette, pattern){
@@ -1424,16 +1781,25 @@ function drawPadTexture(palette, pattern){
     const lh = lw / (state.logo.aspectRatio || 1);
     const padding = size * 0.07;
     const pos = state.logo.pos;
+    const ox = (state.logo.offsetX || 0) * size / 100;
+    const oy = (state.logo.offsetY || 0) * size / 100;
     let x, y;
-    if(pos[1]==='l') x = padding;
-    else if(pos[1]==='r') x = size - lw - padding;
-    else x = (size - lw) / 2;
-    if(pos[0]==='t') y = padding;
-    else if(pos[0]==='b') y = size - lh - padding;
-    else y = (size - lh) / 2;
+    if(pos[1]==='l') x = padding + ox;
+    else if(pos[1]==='r') x = size - lw - padding + ox;
+    else x = (size - lw) / 2 + ox;
+    if(pos[0]==='t') y = padding + oy;
+    else if(pos[0]==='b') y = size - lh - padding + oy;
+    else y = (size - lh) / 2 + oy;
 
     ctx.save();
     ctx.globalAlpha = state.logo.opacity / 100;
+    const rotation = (state.logo.rotation || 0) * Math.PI / 180;
+    if(rotation !== 0){
+      const cx = x + lw/2, cy = y + lh/2;
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      ctx.translate(-cx, -cy);
+    }
     ctx.drawImage(lc, x, y, lw, lh);
     ctx.restore();
   }
@@ -1617,14 +1983,28 @@ function bindEvents(){
     state.view = v;
     document.querySelectorAll('#viewTabs button').forEach(x=>x.classList.toggle('active', x===b));
     document.getElementById('view2d').classList.toggle('active', v==='2d');
-    document.getElementById('view3d').classList.toggle('active', v==='3d');
-    if(v==='3d'){
+    const is3d = (v==='3d' || v==='desk');
+    document.getElementById('view3d').classList.toggle('active', is3d);
+    if(is3d){
       initThree();
+      setSceneMode(v);
       update3D();
-      document.getElementById('lightMeta').textContent = 'Studio A · Tri-light · 5200K';
+      document.getElementById('lightMeta').textContent =
+        v === 'desk' ? 'Desk · Warm 3800K · 82 CRI' : 'Studio A · Tri-light · 5200K';
     } else {
       document.getElementById('lightMeta').textContent = 'Flat · 5200K · 85 CRI';
     }
+  });
+
+  // mouse toggle
+  document.getElementById('mouseToggle').addEventListener('click', ()=>{
+    state.showMouse = !state.showMouse;
+    const btn = document.getElementById('mouseToggle');
+    btn.classList.toggle('active', state.showMouse);
+    btn.title = state.showMouse ? '마우스 숨김' : '마우스 표시';
+    const m2d = document.querySelector('.pad2d .mousecursor');
+    if(m2d) m2d.style.display = state.showMouse ? '' : 'none';
+    if(three?.mouse) three.mouse.visible = state.showMouse;
   });
 
   document.getElementById('swatch').addEventListener('click',()=>picker.click());
@@ -1689,6 +2069,52 @@ function bindEvents(){
     if(state.logo.rawImage) processLogoImage();
   });
   document.getElementById('clearBtn').addEventListener('click', clearLogo);
+
+  // offset / rotation sliders
+  document.getElementById('logoOffsetX').addEventListener('input', e=>{
+    state.logo.offsetX = +e.target.value;
+    document.getElementById('logoOffsetXVal').textContent = state.logo.offsetX;
+    updateLogoPosition();
+    update3D();
+  });
+  document.getElementById('logoOffsetY').addEventListener('input', e=>{
+    state.logo.offsetY = +e.target.value;
+    document.getElementById('logoOffsetYVal').textContent = state.logo.offsetY;
+    updateLogoPosition();
+    update3D();
+  });
+  document.getElementById('logoRotation').addEventListener('input', e=>{
+    state.logo.rotation = +e.target.value;
+    document.getElementById('logoRotationVal').textContent = state.logo.rotation + '°';
+    updateLogoPosition();
+    update3D();
+  });
+  document.getElementById('logoResetBtn').addEventListener('click', ()=>{
+    state.logo.offsetX = 0; state.logo.offsetY = 0; state.logo.rotation = 0;
+    document.getElementById('logoOffsetX').value = 0;
+    document.getElementById('logoOffsetY').value = 0;
+    document.getElementById('logoRotation').value = 0;
+    document.getElementById('logoOffsetXVal').textContent = '0';
+    document.getElementById('logoOffsetYVal').textContent = '0';
+    document.getElementById('logoRotationVal').textContent = '0°';
+    updateLogoPosition();
+    update3D();
+  });
+
+  // kelvin slider + presets
+  document.getElementById('kelvinSlider').addEventListener('input', e=>{
+    state.kelvin = +e.target.value;
+    state.kelvinUserSet = true;
+    document.getElementById('kelvinVal').textContent = state.kelvin + 'K';
+    applyKelvin();
+  });
+  document.getElementById('kelvinPresets').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const k = +b.dataset.k;
+    state.kelvin = k;
+    state.kelvinUserSet = true;
+    applyKelvin();
+  });
 }
 function clearMoodActive(){
   document.querySelectorAll('.mood').forEach(x=>x.classList.remove('active'));
